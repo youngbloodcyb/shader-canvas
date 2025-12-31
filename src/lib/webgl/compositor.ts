@@ -26,6 +26,7 @@ import {
   ditherFragmentShader,
   vignetteFragmentShader,
   chromaticAberrationFragmentShader,
+  blurFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -62,6 +63,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return vignetteFragmentShader;
     case "chromatic-aberration":
       return chromaticAberrationFragmentShader;
+    case "blur":
+      return blurFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -158,6 +161,13 @@ function setShaderUniforms(
     case "chromatic-aberration": {
       const offsetLoc = getUniformLocation(gl, program, "u_offset");
       if (offsetLoc) gl.uniform1f(offsetLoc, layer.properties.offset);
+      break;
+    }
+    case "blur": {
+      const radiusLoc = getUniformLocation(gl, program, "u_radius");
+      const qualityLoc = getUniformLocation(gl, program, "u_quality");
+      if (radiusLoc) gl.uniform1f(radiusLoc, layer.properties.radius);
+      if (qualityLoc) gl.uniform1f(qualityLoc, layer.properties.quality);
       break;
     }
     case "color-correction": {

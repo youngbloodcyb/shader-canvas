@@ -20,6 +20,7 @@ import {
   ditherFragmentShader,
   vignetteFragmentShader,
   chromaticAberrationFragmentShader,
+  blurFragmentShader,
   colorCorrectionFragmentShader,
 } from "@/shaders";
 
@@ -56,6 +57,8 @@ function getFragmentShaderSource(type: ShaderLayer["type"]): string {
       return vignetteFragmentShader;
     case "chromatic-aberration":
       return chromaticAberrationFragmentShader;
+    case "blur":
+      return blurFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -111,6 +114,10 @@ function formatUniformValues(layer: ShaderLayer): string {
       break;
     case "chromatic-aberration":
       lines.push(`u_offset = ${layer.properties.offset}`);
+      break;
+    case "blur":
+      lines.push(`u_radius = ${layer.properties.radius}`);
+      lines.push(`u_quality = ${layer.properties.quality}`);
       break;
     case "color-correction":
       lines.push(`u_brightness = ${layer.properties.brightness}`);

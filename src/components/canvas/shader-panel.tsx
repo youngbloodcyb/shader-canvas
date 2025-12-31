@@ -348,6 +348,26 @@ function ShaderLayerEditor({
           />
         )}
 
+        {layer.type === "blur" && (
+          <>
+            <PropertySlider
+              label="Radius"
+              value={layer.properties.radius}
+              min={0}
+              max={20}
+              onChange={(v) => updateProperty("radius", v)}
+            />
+            <PropertySlider
+              label="Quality"
+              value={layer.properties.quality}
+              min={4}
+              max={16}
+              step={1}
+              onChange={(v) => updateProperty("quality", v)}
+            />
+          </>
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -395,6 +415,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "exposure",
   "saturation",
   "hue-rotate",
+  "blur",
   "blend-mode",
   "film-grain",
   "duotone",
