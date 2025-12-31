@@ -11,6 +11,7 @@ import {
   HANDLE_STYLE,
 } from "@/lib/canvas/constants";
 import { getResizeHandles } from "@/lib/canvas/geometry";
+import { useShaderRenderer } from "./use-shader-renderer";
 
 /**
  * Hook for canvas rendering with requestAnimationFrame
@@ -23,6 +24,9 @@ export function useCanvasRenderer(canvasRef: React.RefObject<HTMLCanvasElement |
 
   const imageCacheRef = useRef<Map<string, HTMLImageElement>>(new Map());
   const frameIdRef = useRef<number>(0);
+
+  // Shader renderer for processing images with shader layers
+  const { getProcessedImage } = useShaderRenderer();
 
   // Load image into cache
   const loadImage = useCallback((url: string): Promise<HTMLImageElement> => {
@@ -126,7 +130,7 @@ export function useCanvasRenderer(canvasRef: React.RefObject<HTMLCanvasElement |
     [gridVisible]
   );
 
-  // Draw images
+  // Draw images (with shader processing)
   const drawImages = useCallback(
     (
       ctx: CanvasRenderingContext2D,
@@ -146,10 +150,21 @@ export function useCanvasRenderer(canvasRef: React.RefObject<HTMLCanvasElement |
         const screenWidth = image.size.width * scale;
         const screenHeight = image.size.height * scale;
 
-        ctx.drawImage(cachedImg, screenX, screenY, screenWidth, screenHeight);
+        // Get processed image if there are shader layers
+        let imageToDraw: HTMLImageElement | HTMLCanvasElement = cachedImg;
+        if (image.shaderLayers.length > 0) {
+          imageToDraw = getProcessedImage(
+            cachedImg,
+            image.shaderLayers,
+            Math.ceil(screenWidth),
+            Math.ceil(screenHeight)
+          );
+        }
+
+        ctx.drawImage(imageToDraw, screenX, screenY, screenWidth, screenHeight);
       }
     },
-    []
+    [getProcessedImage]
   );
 
   // Draw selection UI

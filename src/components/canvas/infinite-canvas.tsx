@@ -4,9 +4,15 @@ import { useCanvasTransform } from "@/hooks/use-canvas-transform";
 import { useCanvasRenderer } from "@/hooks/use-canvas-renderer";
 import { useDragSelect } from "@/hooks/use-drag-select";
 import { useResizeHandles } from "@/hooks/use-resize-handles";
-import { addImageAtom, deleteSelectedAtom, selectAllAtom, selectedImageIdsAtom } from "@/store";
+import {
+  addImageAtom,
+  deleteSelectedAtom,
+  selectAllAtom,
+  selectedImageIdsAtom,
+} from "@/store";
 import type { Position, InteractionMode } from "@/types/canvas";
 import { cn } from "@/lib/utils";
+import { ShaderPanel } from "./shader-panel";
 
 interface InfiniteCanvasProps {
   className?: string;
@@ -17,6 +23,7 @@ function InfiniteCanvasInner({ className }: InfiniteCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [interactionMode, setInteractionMode] = useState<InteractionMode>("idle");
   const [cursor, setCursor] = useState("default");
+  const [showShaderPanel, setShowShaderPanel] = useState(true);
 
   const addImage = useSetAtom(addImageAtom);
   const deleteSelected = useSetAtom(deleteSelectedAtom);
@@ -141,6 +148,12 @@ function InfiniteCanvasInner({ className }: InfiniteCanvasProps) {
         e.preventDefault();
         selectAll();
       }
+
+      // Toggle shader panel with Tab
+      if (e.key === "Tab" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        setShowShaderPanel((prev) => !prev);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -213,37 +226,48 @@ function InfiniteCanvasInner({ className }: InfiniteCanvasProps) {
 
   return (
     <div
-      ref={containerRef}
-      className={cn(
-        "relative w-full h-full overflow-hidden bg-background",
-        className
-      )}
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      data-slot="infinite-canvas"
+      className={cn("flex w-full h-full", className)}
+      data-slot="infinite-canvas-container"
     >
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ cursor }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-      />
+      {/* Main canvas area */}
+      <div
+        ref={containerRef}
+        className="relative flex-1 overflow-hidden bg-background"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        data-slot="infinite-canvas"
+      >
+        {/* Main 2D canvas - shaders are applied directly here */}
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full"
+          style={{ cursor }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+        />
 
-      {/* Zoom indicator */}
-      <div className="absolute bottom-4 right-4 px-2 py-1 bg-background/80 backdrop-blur-sm rounded text-sm text-muted-foreground">
-        {Math.round(transform.scale * 100)}%
+        {/* Zoom indicator */}
+        <div className="absolute bottom-4 left-4 px-2 py-1 bg-background/80 backdrop-blur-sm rounded text-sm text-muted-foreground">
+          {Math.round(transform.scale * 100)}%
+        </div>
+
+        {/* Instructions */}
+        <div className="absolute top-4 left-4 px-3 py-2 bg-background/80 backdrop-blur-sm rounded text-sm text-muted-foreground">
+          <p>Drop images to add</p>
+          <p className="text-xs mt-1 opacity-70">
+            Scroll to zoom, drag to pan, Tab to toggle panel
+          </p>
+        </div>
       </div>
 
-      {/* Instructions */}
-      <div className="absolute top-4 left-4 px-3 py-2 bg-background/80 backdrop-blur-sm rounded text-sm text-muted-foreground">
-        <p>Drop images to add</p>
-        <p className="text-xs mt-1 opacity-70">
-          Scroll to zoom, drag to pan
-        </p>
-      </div>
+      {/* Shader panel sidebar */}
+      {showShaderPanel && (
+        <div className="w-72 border-l bg-background flex flex-col">
+          <ShaderPanel />
+        </div>
+      )}
     </div>
   );
 }

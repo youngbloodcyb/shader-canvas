@@ -76,6 +76,34 @@ export interface InvertShader extends ShaderLayerBase {
 }
 
 /**
+ * Exposure shader - adjusts exposure
+ */
+export interface ExposureShader extends ShaderLayerBase {
+  type: "exposure";
+  properties: {
+    /** 0.5 (darker) to 2 (brighter), 1 = unchanged */
+    value: number;
+  };
+}
+
+/**
+ * Color correction shader - combined adjustments
+ */
+export interface ColorCorrectionShader extends ShaderLayerBase {
+  type: "color-correction";
+  properties: {
+    /** -1 to 1, 0 = unchanged */
+    brightness: number;
+    /** -1 to 1, 0 = unchanged */
+    contrast: number;
+    /** 0.5 to 2, 1 = unchanged */
+    exposure: number;
+    /** 0 to 2, 1 = unchanged */
+    saturation: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -88,7 +116,9 @@ export type ShaderLayer =
   | BlurShader
   | SaturationShader
   | HueRotateShader
-  | InvertShader;
+  | InvertShader
+  | ExposureShader
+  | ColorCorrectionShader;
 
 /**
  * Extract shader type string literals
@@ -110,11 +140,18 @@ export const SHADER_DEFAULTS: {
   [K in ShaderType]: ShaderProperties<K>;
 } = {
   brightness: { value: 0 },
-  contrast: { value: 1 },
+  contrast: { value: 0 },
   blur: { radius: 0, quality: 8 },
   saturation: { value: 1 },
   "hue-rotate": { degrees: 0 },
   invert: { amount: 0 },
+  exposure: { value: 1 },
+  "color-correction": {
+    brightness: 0,
+    contrast: 0,
+    exposure: 1,
+    saturation: 1,
+  },
 };
 
 /**
@@ -127,6 +164,8 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   saturation: "Saturation",
   "hue-rotate": "Hue Rotate",
   invert: "Invert",
+  exposure: "Exposure",
+  "color-correction": "Color Correction",
 };
 
 /**
