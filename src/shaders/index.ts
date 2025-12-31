@@ -22,3 +22,4 @@ export { pixelateFragmentShader } from "./pixelate.frag";
 export { thresholdFragmentShader } from "./threshold.frag";
 export { ditherFragmentShader } from "./dither.frag";
 export { vignetteFragmentShader } from "./vignette.frag";
+export { chromaticAberrationFragmentShader } from "./chromatic-aberration.frag";

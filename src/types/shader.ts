@@ -198,6 +198,17 @@ export interface VignetteShader extends ShaderLayerBase {
 }
 
 /**
+ * Chromatic aberration shader - RGB channel splitting
+ */
+export interface ChromaticAberrationShader extends ShaderLayerBase {
+  type: "chromatic-aberration";
+  properties: {
+    /** Offset intensity (0-0.1) */
+    offset: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -219,7 +230,8 @@ export type ShaderLayer =
   | PixelateShader
   | ThresholdShader
   | DitherShader
-  | VignetteShader;
+  | VignetteShader
+  | ChromaticAberrationShader;
 
 /**
  * Extract shader type string literals
@@ -280,6 +292,9 @@ export const SHADER_DEFAULTS: {
     roundness: 0.5,
     smoothness: 0.5,
   },
+  "chromatic-aberration": {
+    offset: 0.02,
+  },
 };
 
 /**
@@ -301,6 +316,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   "threshold": "Threshold",
   "dither": "Dither",
   "vignette": "Vignette",
+  "chromatic-aberration": "Chromatic Aberration",
 };
 
 /**

@@ -25,6 +25,7 @@ import {
   thresholdFragmentShader,
   ditherFragmentShader,
   vignetteFragmentShader,
+  chromaticAberrationFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -59,6 +60,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return ditherFragmentShader;
     case "vignette":
       return vignetteFragmentShader;
+    case "chromatic-aberration":
+      return chromaticAberrationFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -152,6 +155,11 @@ function setShaderUniforms(
       if (smoothnessLoc) gl.uniform1f(smoothnessLoc, layer.properties.smoothness);
       break;
     }
+    case "chromatic-aberration": {
+      const offsetLoc = getUniformLocation(gl, program, "u_offset");
+      if (offsetLoc) gl.uniform1f(offsetLoc, layer.properties.offset);
+      break;
+    }
     case "color-correction": {
       const brightnessLoc = getUniformLocation(gl, program, "u_brightness");
       const contrastLoc = getUniformLocation(gl, program, "u_contrast");
@@ -201,6 +209,8 @@ function hasEffect(layer: ShaderLayer): boolean {
       return layer.properties.intensity > 0;
     case "pixelate":
       return layer.properties.size > 1;
+    case "chromatic-aberration":
+      return layer.properties.offset > 0;
     default:
       return true;
   }

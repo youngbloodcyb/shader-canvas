@@ -336,6 +336,16 @@ function ShaderLayerEditor({
           </>
         )}
 
+        {layer.type === "chromatic-aberration" && (
+          <PropertySlider
+            label="Offset"
+            value={layer.properties.offset}
+            min={0}
+            max={0.1}
+            onChange={(v) => updateProperty("offset", v)}
+          />
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -390,6 +400,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "threshold",
   "dither",
   "vignette",
+  "chromatic-aberration",
   "invert",
 ];
 
