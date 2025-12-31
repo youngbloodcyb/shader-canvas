@@ -20,6 +20,7 @@ import {
   blendModeFragmentShader,
   BLEND_MODE_VALUES,
   filmGrainFragmentShader,
+  duotoneFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -44,6 +45,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return blendModeFragmentShader;
     case "film-grain":
       return filmGrainFragmentShader;
+    case "duotone":
+      return duotoneFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -104,6 +107,13 @@ function setShaderUniforms(
       const sizeLoc = getUniformLocation(gl, program, "u_size");
       if (intensityLoc) gl.uniform1f(intensityLoc, layer.properties.intensity);
       if (sizeLoc) gl.uniform1f(sizeLoc, layer.properties.size);
+      break;
+    }
+    case "duotone": {
+      const shadowLoc = getUniformLocation(gl, program, "u_shadowColor");
+      const highlightLoc = getUniformLocation(gl, program, "u_highlightColor");
+      if (shadowLoc) gl.uniform3f(shadowLoc, layer.properties.shadowColor[0], layer.properties.shadowColor[1], layer.properties.shadowColor[2]);
+      if (highlightLoc) gl.uniform3f(highlightLoc, layer.properties.highlightColor[0], layer.properties.highlightColor[1], layer.properties.highlightColor[2]);
       break;
     }
     case "color-correction": {

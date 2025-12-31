@@ -255,6 +255,29 @@ function ShaderLayerEditor({
           </>
         )}
 
+        {layer.type === "duotone" && (
+          <>
+            <div className="space-y-1">
+              <span className="text-xs text-muted-foreground">Shadow Color</span>
+              <input
+                type="color"
+                value={rgbToHex(layer.properties.shadowColor)}
+                onChange={(e) => updateProperty("shadowColor", hexToRgb(e.target.value))}
+                className="w-full h-8 rounded cursor-pointer"
+              />
+            </div>
+            <div className="space-y-1">
+              <span className="text-xs text-muted-foreground">Highlight Color</span>
+              <input
+                type="color"
+                value={rgbToHex(layer.properties.highlightColor)}
+                onChange={(e) => updateProperty("highlightColor", hexToRgb(e.target.value))}
+                className="w-full h-8 rounded cursor-pointer"
+              />
+            </div>
+          </>
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -304,6 +327,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "hue-rotate",
   "blend-mode",
   "film-grain",
+  "duotone",
   "invert",
 ];
 

@@ -137,6 +137,19 @@ export interface FilmGrainShader extends ShaderLayerBase {
 }
 
 /**
+ * Duotone shader - maps image to two colors
+ */
+export interface DuotoneShader extends ShaderLayerBase {
+  type: "duotone";
+  properties: {
+    /** Shadow/dark color RGB (0-1 each) */
+    shadowColor: [number, number, number];
+    /** Highlight/light color RGB (0-1 each) */
+    highlightColor: [number, number, number];
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -153,7 +166,8 @@ export type ShaderLayer =
   | ExposureShader
   | ColorCorrectionShader
   | BlendModeShader
-  | FilmGrainShader;
+  | FilmGrainShader
+  | DuotoneShader;
 
 /**
  * Extract shader type string literals
@@ -196,6 +210,10 @@ export const SHADER_DEFAULTS: {
     intensity: 0.3,
     size: 1.5,
   },
+  "duotone": {
+    shadowColor: [0.1, 0.0, 0.2],
+    highlightColor: [1.0, 0.9, 0.5],
+  },
 };
 
 /**
@@ -212,6 +230,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   "color-correction": "Color Correction",
   "blend-mode": "Blend Mode",
   "film-grain": "Film Grain",
+  "duotone": "Duotone",
 };
 
 /**
