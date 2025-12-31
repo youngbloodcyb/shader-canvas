@@ -156,6 +156,17 @@ function ShaderLayerEditor({
           />
         )}
 
+        {layer.type === "hue-rotate" && (
+          <PropertySlider
+            label="Degrees"
+            value={layer.properties.degrees}
+            min={0}
+            max={360}
+            step={1}
+            onChange={(v) => updateProperty("degrees", v)}
+          />
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -202,6 +213,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "contrast",
   "exposure",
   "saturation",
+  "hue-rotate",
   "invert",
 ];
 

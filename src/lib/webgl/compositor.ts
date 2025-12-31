@@ -16,6 +16,7 @@ import {
   exposureFragmentShader,
   saturationFragmentShader,
   invertFragmentShader,
+  hueRotateFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -34,6 +35,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return saturationFragmentShader;
     case "invert":
       return invertFragmentShader;
+    case "hue-rotate":
+      return hueRotateFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -73,6 +76,11 @@ function setShaderUniforms(
     case "invert": {
       const loc = getUniformLocation(gl, program, "u_amount");
       if (loc) gl.uniform1f(loc, layer.properties.amount);
+      break;
+    }
+    case "hue-rotate": {
+      const loc = getUniformLocation(gl, program, "u_degrees");
+      if (loc) gl.uniform1f(loc, layer.properties.degrees);
       break;
     }
     case "color-correction": {

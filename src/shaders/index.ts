@@ -13,3 +13,5 @@ export {
   saturationFragmentShader,
   invertFragmentShader,
 } from "./color-correction.frag";
+
+export { hueRotateFragmentShader } from "./hue-rotate.frag";
