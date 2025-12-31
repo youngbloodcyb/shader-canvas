@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ComponentExample } from "@/components/component-example";
+import { InfiniteCanvas } from "@/components/canvas/infinite-canvas";
 
 export const Route = createFileRoute("/")({ component: App });
 
 function App() {
-return (
-  <ComponentExample />
-);
+  return (
+    <div className="h-screen w-screen">
+      <InfiniteCanvas className="h-full w-full" />
+    </div>
+  );
 }
