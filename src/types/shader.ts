@@ -124,6 +124,19 @@ export interface BlendModeShader extends ShaderLayerBase {
 }
 
 /**
+ * Film grain shader - adds noise texture
+ */
+export interface FilmGrainShader extends ShaderLayerBase {
+  type: "film-grain";
+  properties: {
+    /** Grain intensity (0-1) */
+    intensity: number;
+    /** Grain size (0.5-3) */
+    size: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -139,7 +152,8 @@ export type ShaderLayer =
   | InvertShader
   | ExposureShader
   | ColorCorrectionShader
-  | BlendModeShader;
+  | BlendModeShader
+  | FilmGrainShader;
 
 /**
  * Extract shader type string literals
@@ -178,6 +192,10 @@ export const SHADER_DEFAULTS: {
     color: [1, 0.5, 0],
     opacity: 0.5,
   },
+  "film-grain": {
+    intensity: 0.3,
+    size: 1.5,
+  },
 };
 
 /**
@@ -193,6 +211,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   exposure: "Exposure",
   "color-correction": "Color Correction",
   "blend-mode": "Blend Mode",
+  "film-grain": "Film Grain",
 };
 
 /**

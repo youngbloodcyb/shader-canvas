@@ -236,6 +236,25 @@ function ShaderLayerEditor({
           </>
         )}
 
+        {layer.type === "film-grain" && (
+          <>
+            <PropertySlider
+              label="Intensity"
+              value={layer.properties.intensity}
+              min={0}
+              max={1}
+              onChange={(v) => updateProperty("intensity", v)}
+            />
+            <PropertySlider
+              label="Size"
+              value={layer.properties.size}
+              min={0.5}
+              max={3}
+              onChange={(v) => updateProperty("size", v)}
+            />
+          </>
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -284,6 +303,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "saturation",
   "hue-rotate",
   "blend-mode",
+  "film-grain",
   "invert",
 ];
 

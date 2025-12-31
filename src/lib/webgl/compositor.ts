@@ -19,6 +19,7 @@ import {
   hueRotateFragmentShader,
   blendModeFragmentShader,
   BLEND_MODE_VALUES,
+  filmGrainFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -41,6 +42,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return hueRotateFragmentShader;
     case "blend-mode":
       return blendModeFragmentShader;
+    case "film-grain":
+      return filmGrainFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -96,6 +99,13 @@ function setShaderUniforms(
       if (modeLoc) gl.uniform1i(modeLoc, BLEND_MODE_VALUES[layer.properties.mode] ?? 0);
       break;
     }
+    case "film-grain": {
+      const intensityLoc = getUniformLocation(gl, program, "u_intensity");
+      const sizeLoc = getUniformLocation(gl, program, "u_size");
+      if (intensityLoc) gl.uniform1f(intensityLoc, layer.properties.intensity);
+      if (sizeLoc) gl.uniform1f(sizeLoc, layer.properties.size);
+      break;
+    }
     case "color-correction": {
       const brightnessLoc = getUniformLocation(gl, program, "u_brightness");
       const contrastLoc = getUniformLocation(gl, program, "u_contrast");
@@ -141,6 +151,8 @@ function hasEffect(layer: ShaderLayer): boolean {
       return layer.properties.degrees !== 0;
     case "blend-mode":
       return layer.properties.opacity > 0;
+    case "film-grain":
+      return layer.properties.intensity > 0;
     default:
       return true;
   }
