@@ -21,3 +21,4 @@ export { duotoneFragmentShader } from "./duotone.frag";
 export { pixelateFragmentShader } from "./pixelate.frag";
 export { thresholdFragmentShader } from "./threshold.frag";
 export { ditherFragmentShader } from "./dither.frag";
+export { vignetteFragmentShader } from "./vignette.frag";

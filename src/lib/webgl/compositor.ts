@@ -24,6 +24,7 @@ import {
   pixelateFragmentShader,
   thresholdFragmentShader,
   ditherFragmentShader,
+  vignetteFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -56,6 +57,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return thresholdFragmentShader;
     case "dither":
       return ditherFragmentShader;
+    case "vignette":
+      return vignetteFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -138,6 +141,15 @@ function setShaderUniforms(
     case "dither": {
       const scaleLoc = getUniformLocation(gl, program, "u_scale");
       if (scaleLoc) gl.uniform1f(scaleLoc, layer.properties.scale);
+      break;
+    }
+    case "vignette": {
+      const sizeLoc = getUniformLocation(gl, program, "u_size");
+      const roundnessLoc = getUniformLocation(gl, program, "u_roundness");
+      const smoothnessLoc = getUniformLocation(gl, program, "u_smoothness");
+      if (sizeLoc) gl.uniform1f(sizeLoc, layer.properties.size);
+      if (roundnessLoc) gl.uniform1f(roundnessLoc, layer.properties.roundness);
+      if (smoothnessLoc) gl.uniform1f(smoothnessLoc, layer.properties.smoothness);
       break;
     }
     case "color-correction": {

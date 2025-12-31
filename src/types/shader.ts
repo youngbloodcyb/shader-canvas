@@ -183,6 +183,21 @@ export interface DitherShader extends ShaderLayerBase {
 }
 
 /**
+ * Vignette shader - darkens edges
+ */
+export interface VignetteShader extends ShaderLayerBase {
+  type: "vignette";
+  properties: {
+    /** Vignette size (0-0.5) */
+    size: number;
+    /** Corner roundness (0-1) */
+    roundness: number;
+    /** Edge smoothness (0-1) */
+    smoothness: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -203,7 +218,8 @@ export type ShaderLayer =
   | DuotoneShader
   | PixelateShader
   | ThresholdShader
-  | DitherShader;
+  | DitherShader
+  | VignetteShader;
 
 /**
  * Extract shader type string literals
@@ -259,6 +275,11 @@ export const SHADER_DEFAULTS: {
   "dither": {
     scale: 1,
   },
+  "vignette": {
+    size: 0.25,
+    roundness: 0.5,
+    smoothness: 0.5,
+  },
 };
 
 /**
@@ -279,6 +300,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   "pixelate": "Pixelate",
   "threshold": "Threshold",
   "dither": "Dither",
+  "vignette": "Vignette",
 };
 
 /**

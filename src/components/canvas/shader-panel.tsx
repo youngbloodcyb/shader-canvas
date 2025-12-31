@@ -310,6 +310,32 @@ function ShaderLayerEditor({
           />
         )}
 
+        {layer.type === "vignette" && (
+          <>
+            <PropertySlider
+              label="Size"
+              value={layer.properties.size}
+              min={0}
+              max={0.5}
+              onChange={(v) => updateProperty("size", v)}
+            />
+            <PropertySlider
+              label="Roundness"
+              value={layer.properties.roundness}
+              min={0}
+              max={1}
+              onChange={(v) => updateProperty("roundness", v)}
+            />
+            <PropertySlider
+              label="Smoothness"
+              value={layer.properties.smoothness}
+              min={0}
+              max={1}
+              onChange={(v) => updateProperty("smoothness", v)}
+            />
+          </>
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -363,6 +389,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "pixelate",
   "threshold",
   "dither",
+  "vignette",
   "invert",
 ];
 
