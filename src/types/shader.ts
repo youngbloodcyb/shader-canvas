@@ -161,6 +161,17 @@ export interface PixelateShader extends ShaderLayerBase {
 }
 
 /**
+ * Threshold shader - creates binary black/white image
+ */
+export interface ThresholdShader extends ShaderLayerBase {
+  type: "threshold";
+  properties: {
+    /** Threshold value (0-1) */
+    value: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -179,7 +190,8 @@ export type ShaderLayer =
   | BlendModeShader
   | FilmGrainShader
   | DuotoneShader
-  | PixelateShader;
+  | PixelateShader
+  | ThresholdShader;
 
 /**
  * Extract shader type string literals
@@ -229,6 +241,9 @@ export const SHADER_DEFAULTS: {
   "pixelate": {
     size: 8,
   },
+  "threshold": {
+    value: 0.5,
+  },
 };
 
 /**
@@ -247,6 +262,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   "film-grain": "Film Grain",
   "duotone": "Duotone",
   "pixelate": "Pixelate",
+  "threshold": "Threshold",
 };
 
 /**

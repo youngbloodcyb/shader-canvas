@@ -289,6 +289,16 @@ function ShaderLayerEditor({
           />
         )}
 
+        {layer.type === "threshold" && (
+          <PropertySlider
+            label="Threshold"
+            value={layer.properties.value}
+            min={0}
+            max={1}
+            onChange={(v) => updateProperty("value", v)}
+          />
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -340,6 +350,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "film-grain",
   "duotone",
   "pixelate",
+  "threshold",
   "invert",
 ];
 

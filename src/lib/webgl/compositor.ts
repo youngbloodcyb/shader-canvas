@@ -22,6 +22,7 @@ import {
   filmGrainFragmentShader,
   duotoneFragmentShader,
   pixelateFragmentShader,
+  thresholdFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -50,6 +51,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return duotoneFragmentShader;
     case "pixelate":
       return pixelateFragmentShader;
+    case "threshold":
+      return thresholdFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -122,6 +125,11 @@ function setShaderUniforms(
     case "pixelate": {
       const sizeLoc = getUniformLocation(gl, program, "u_size");
       if (sizeLoc) gl.uniform1f(sizeLoc, layer.properties.size);
+      break;
+    }
+    case "threshold": {
+      const valueLoc = getUniformLocation(gl, program, "u_value");
+      if (valueLoc) gl.uniform1f(valueLoc, layer.properties.value);
       break;
     }
     case "color-correction": {
