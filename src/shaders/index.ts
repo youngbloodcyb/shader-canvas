@@ -20,3 +20,4 @@ export { filmGrainFragmentShader } from "./film-grain.frag";
 export { duotoneFragmentShader } from "./duotone.frag";
 export { pixelateFragmentShader } from "./pixelate.frag";
 export { thresholdFragmentShader } from "./threshold.frag";
+export { ditherFragmentShader } from "./dither.frag";

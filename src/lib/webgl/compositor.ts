@@ -23,6 +23,7 @@ import {
   duotoneFragmentShader,
   pixelateFragmentShader,
   thresholdFragmentShader,
+  ditherFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -53,6 +54,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return pixelateFragmentShader;
     case "threshold":
       return thresholdFragmentShader;
+    case "dither":
+      return ditherFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -130,6 +133,11 @@ function setShaderUniforms(
     case "threshold": {
       const valueLoc = getUniformLocation(gl, program, "u_value");
       if (valueLoc) gl.uniform1f(valueLoc, layer.properties.value);
+      break;
+    }
+    case "dither": {
+      const scaleLoc = getUniformLocation(gl, program, "u_scale");
+      if (scaleLoc) gl.uniform1f(scaleLoc, layer.properties.scale);
       break;
     }
     case "color-correction": {

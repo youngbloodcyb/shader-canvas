@@ -299,6 +299,17 @@ function ShaderLayerEditor({
           />
         )}
 
+        {layer.type === "dither" && (
+          <PropertySlider
+            label="Scale"
+            value={layer.properties.scale}
+            min={1}
+            max={8}
+            step={1}
+            onChange={(v) => updateProperty("scale", v)}
+          />
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -351,6 +362,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "duotone",
   "pixelate",
   "threshold",
+  "dither",
   "invert",
 ];
 

@@ -172,6 +172,17 @@ export interface ThresholdShader extends ShaderLayerBase {
 }
 
 /**
+ * Dither shader - creates halftone-like pattern
+ */
+export interface DitherShader extends ShaderLayerBase {
+  type: "dither";
+  properties: {
+    /** Pattern scale (1-8) */
+    scale: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -191,7 +202,8 @@ export type ShaderLayer =
   | FilmGrainShader
   | DuotoneShader
   | PixelateShader
-  | ThresholdShader;
+  | ThresholdShader
+  | DitherShader;
 
 /**
  * Extract shader type string literals
@@ -244,6 +256,9 @@ export const SHADER_DEFAULTS: {
   "threshold": {
     value: 0.5,
   },
+  "dither": {
+    scale: 1,
+  },
 };
 
 /**
@@ -263,6 +278,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   "duotone": "Duotone",
   "pixelate": "Pixelate",
   "threshold": "Threshold",
+  "dither": "Dither",
 };
 
 /**
