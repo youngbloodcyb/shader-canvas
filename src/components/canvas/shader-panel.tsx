@@ -11,7 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Plus, Trash2, Eye, EyeOff } from "lucide-react";
+import { Plus, Trash2, Eye, EyeOff, Download, Code } from "lucide-react";
+import { exportAndDownloadImage } from "@/lib/export/image-export";
+import { generateShaderExport, downloadTextFile } from "@/lib/export/shader-export";
 
 /**
  * Blend mode options
@@ -466,6 +468,37 @@ export function ShaderPanel() {
               {SHADER_LABELS[type]}
             </Button>
           ))}
+        </div>
+      </div>
+
+      <Separator />
+
+      <div className="p-3">
+        <Label className="text-xs font-medium uppercase text-muted-foreground mb-2 block">
+          Export
+        </Label>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={() => exportAndDownloadImage(selectedImage)}
+          >
+            <Download className="h-3.5 w-3.5 mr-1.5" />
+            Image
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={() => {
+              const code = generateShaderExport(selectedImage.shaderLayers);
+              downloadTextFile(code, `shader-export-${Date.now()}.glsl`);
+            }}
+          >
+            <Code className="h-3.5 w-3.5 mr-1.5" />
+            Shader Code
+          </Button>
         </div>
       </div>
     </div>
