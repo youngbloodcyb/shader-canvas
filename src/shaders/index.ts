@@ -15,3 +15,4 @@ export {
 } from "./color-correction.frag";
 
 export { hueRotateFragmentShader } from "./hue-rotate.frag";
+export { blendModeFragmentShader, BLEND_MODE_VALUES } from "./blend-mode.frag";

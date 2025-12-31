@@ -104,6 +104,26 @@ export interface ColorCorrectionShader extends ShaderLayerBase {
 }
 
 /**
+ * Blend mode types
+ */
+export type BlendModeType = "multiply" | "screen" | "overlay" | "soft-light" | "hard-light" | "color-dodge" | "color-burn";
+
+/**
+ * Blend mode shader - blends image with a color
+ */
+export interface BlendModeShader extends ShaderLayerBase {
+  type: "blend-mode";
+  properties: {
+    /** Blend mode to use */
+    mode: BlendModeType;
+    /** Blend color RGB (0-1 each) */
+    color: [number, number, number];
+    /** Blend opacity (0-1) */
+    opacity: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -118,7 +138,8 @@ export type ShaderLayer =
   | HueRotateShader
   | InvertShader
   | ExposureShader
-  | ColorCorrectionShader;
+  | ColorCorrectionShader
+  | BlendModeShader;
 
 /**
  * Extract shader type string literals
@@ -152,6 +173,11 @@ export const SHADER_DEFAULTS: {
     exposure: 1,
     saturation: 1,
   },
+  "blend-mode": {
+    mode: "multiply",
+    color: [1, 0.5, 0],
+    opacity: 0.5,
+  },
 };
 
 /**
@@ -166,6 +192,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   invert: "Invert",
   exposure: "Exposure",
   "color-correction": "Color Correction",
+  "blend-mode": "Blend Mode",
 };
 
 /**

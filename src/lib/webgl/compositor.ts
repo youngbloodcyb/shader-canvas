@@ -17,6 +17,8 @@ import {
   saturationFragmentShader,
   invertFragmentShader,
   hueRotateFragmentShader,
+  blendModeFragmentShader,
+  BLEND_MODE_VALUES,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -37,6 +39,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return invertFragmentShader;
     case "hue-rotate":
       return hueRotateFragmentShader;
+    case "blend-mode":
+      return blendModeFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -83,6 +87,15 @@ function setShaderUniforms(
       if (loc) gl.uniform1f(loc, layer.properties.degrees);
       break;
     }
+    case "blend-mode": {
+      const colorLoc = getUniformLocation(gl, program, "u_blendColor");
+      const opacityLoc = getUniformLocation(gl, program, "u_opacity");
+      const modeLoc = getUniformLocation(gl, program, "u_mode");
+      if (colorLoc) gl.uniform3f(colorLoc, layer.properties.color[0], layer.properties.color[1], layer.properties.color[2]);
+      if (opacityLoc) gl.uniform1f(opacityLoc, layer.properties.opacity);
+      if (modeLoc) gl.uniform1i(modeLoc, BLEND_MODE_VALUES[layer.properties.mode] ?? 0);
+      break;
+    }
     case "color-correction": {
       const brightnessLoc = getUniformLocation(gl, program, "u_brightness");
       const contrastLoc = getUniformLocation(gl, program, "u_contrast");
@@ -126,6 +139,8 @@ function hasEffect(layer: ShaderLayer): boolean {
       return layer.properties.radius > 0;
     case "hue-rotate":
       return layer.properties.degrees !== 0;
+    case "blend-mode":
+      return layer.properties.opacity > 0;
     default:
       return true;
   }

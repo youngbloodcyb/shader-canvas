@@ -6,12 +6,46 @@ import {
   updateShaderLayerAtom,
   toggleShaderLayerAtom,
 } from "@/store";
-import { SHADER_LABELS, type ShaderType, type ShaderLayer } from "@/types/shader";
+import { SHADER_LABELS, type ShaderType, type ShaderLayer, type BlendModeType } from "@/types/shader";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Plus, Trash2, Eye, EyeOff } from "lucide-react";
+
+/**
+ * Blend mode options
+ */
+const BLEND_MODE_OPTIONS: { value: BlendModeType; label: string }[] = [
+  { value: "multiply", label: "Multiply" },
+  { value: "screen", label: "Screen" },
+  { value: "overlay", label: "Overlay" },
+  { value: "soft-light", label: "Soft Light" },
+  { value: "hard-light", label: "Hard Light" },
+  { value: "color-dodge", label: "Color Dodge" },
+  { value: "color-burn", label: "Color Burn" },
+];
+
+/**
+ * Convert RGB array [0-1] to hex color string
+ */
+function rgbToHex(rgb: [number, number, number]): string {
+  const toHex = (n: number) => Math.round(n * 255).toString(16).padStart(2, "0");
+  return `#${toHex(rgb[0])}${toHex(rgb[1])}${toHex(rgb[2])}`;
+}
+
+/**
+ * Convert hex color string to RGB array [0-1]
+ */
+function hexToRgb(hex: string): [number, number, number] {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return [1, 1, 1];
+  return [
+    parseInt(result[1], 16) / 255,
+    parseInt(result[2], 16) / 255,
+    parseInt(result[3], 16) / 255,
+  ];
+}
 
 /**
  * Slider component for shader property
@@ -167,6 +201,41 @@ function ShaderLayerEditor({
           />
         )}
 
+        {layer.type === "blend-mode" && (
+          <>
+            <div className="space-y-1">
+              <span className="text-xs text-muted-foreground">Mode</span>
+              <select
+                value={layer.properties.mode}
+                onChange={(e) => updateProperty("mode", e.target.value)}
+                className="w-full h-8 px-2 bg-secondary rounded text-sm"
+              >
+                {BLEND_MODE_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-1">
+              <span className="text-xs text-muted-foreground">Color</span>
+              <input
+                type="color"
+                value={rgbToHex(layer.properties.color)}
+                onChange={(e) => updateProperty("color", hexToRgb(e.target.value))}
+                className="w-full h-8 rounded cursor-pointer"
+              />
+            </div>
+            <PropertySlider
+              label="Opacity"
+              value={layer.properties.opacity}
+              min={0}
+              max={1}
+              onChange={(v) => updateProperty("opacity", v)}
+            />
+          </>
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -214,6 +283,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "exposure",
   "saturation",
   "hue-rotate",
+  "blend-mode",
   "invert",
 ];
 
