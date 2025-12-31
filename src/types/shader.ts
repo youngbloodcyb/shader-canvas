@@ -150,6 +150,17 @@ export interface DuotoneShader extends ShaderLayerBase {
 }
 
 /**
+ * Pixelate shader - creates blocky pixel effect
+ */
+export interface PixelateShader extends ShaderLayerBase {
+  type: "pixelate";
+  properties: {
+    /** Pixel block size (1-100) */
+    size: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -167,7 +178,8 @@ export type ShaderLayer =
   | ColorCorrectionShader
   | BlendModeShader
   | FilmGrainShader
-  | DuotoneShader;
+  | DuotoneShader
+  | PixelateShader;
 
 /**
  * Extract shader type string literals
@@ -214,6 +226,9 @@ export const SHADER_DEFAULTS: {
     shadowColor: [0.1, 0.0, 0.2],
     highlightColor: [1.0, 0.9, 0.5],
   },
+  "pixelate": {
+    size: 8,
+  },
 };
 
 /**
@@ -231,6 +246,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   "blend-mode": "Blend Mode",
   "film-grain": "Film Grain",
   "duotone": "Duotone",
+  "pixelate": "Pixelate",
 };
 
 /**

@@ -21,6 +21,7 @@ import {
   BLEND_MODE_VALUES,
   filmGrainFragmentShader,
   duotoneFragmentShader,
+  pixelateFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -47,6 +48,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return filmGrainFragmentShader;
     case "duotone":
       return duotoneFragmentShader;
+    case "pixelate":
+      return pixelateFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -116,6 +119,11 @@ function setShaderUniforms(
       if (highlightLoc) gl.uniform3f(highlightLoc, layer.properties.highlightColor[0], layer.properties.highlightColor[1], layer.properties.highlightColor[2]);
       break;
     }
+    case "pixelate": {
+      const sizeLoc = getUniformLocation(gl, program, "u_size");
+      if (sizeLoc) gl.uniform1f(sizeLoc, layer.properties.size);
+      break;
+    }
     case "color-correction": {
       const brightnessLoc = getUniformLocation(gl, program, "u_brightness");
       const contrastLoc = getUniformLocation(gl, program, "u_contrast");
@@ -163,6 +171,8 @@ function hasEffect(layer: ShaderLayer): boolean {
       return layer.properties.opacity > 0;
     case "film-grain":
       return layer.properties.intensity > 0;
+    case "pixelate":
+      return layer.properties.size > 1;
     default:
       return true;
   }

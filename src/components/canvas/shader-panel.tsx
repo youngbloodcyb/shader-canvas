@@ -278,6 +278,17 @@ function ShaderLayerEditor({
           </>
         )}
 
+        {layer.type === "pixelate" && (
+          <PropertySlider
+            label="Pixel Size"
+            value={layer.properties.size}
+            min={1}
+            max={100}
+            step={1}
+            onChange={(v) => updateProperty("size", v)}
+          />
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -328,6 +339,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "blend-mode",
   "film-grain",
   "duotone",
+  "pixelate",
   "invert",
 ];
 

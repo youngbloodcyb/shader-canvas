@@ -18,3 +18,4 @@ export { hueRotateFragmentShader } from "./hue-rotate.frag";
 export { blendModeFragmentShader, BLEND_MODE_VALUES } from "./blend-mode.frag";
 export { filmGrainFragmentShader } from "./film-grain.frag";
 export { duotoneFragmentShader } from "./duotone.frag";
+export { pixelateFragmentShader } from "./pixelate.frag";
