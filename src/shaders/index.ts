@@ -24,3 +24,4 @@ export { ditherFragmentShader } from "./dither.frag";
 export { vignetteFragmentShader } from "./vignette.frag";
 export { chromaticAberrationFragmentShader } from "./chromatic-aberration.frag";
 export { blurFragmentShader } from "./blur.frag";
+export { lutFragmentShader } from "./lut.frag";

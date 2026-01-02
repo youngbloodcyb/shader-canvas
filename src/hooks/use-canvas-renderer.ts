@@ -26,7 +26,18 @@ export function useCanvasRenderer(canvasRef: React.RefObject<HTMLCanvasElement |
   const frameIdRef = useRef<number>(0);
 
   // Shader renderer for processing images with shader layers
-  const { getProcessedImage } = useShaderRenderer();
+  const { getProcessedImage, loadLutImage } = useShaderRenderer();
+
+  // Pre-load LUT images when LUT layers are detected
+  useEffect(() => {
+    images.forEach((image) => {
+      image.shaderLayers.forEach((layer) => {
+        if (layer.type === "lut" && layer.properties.lutUrl) {
+          loadLutImage(layer.properties.lutUrl);
+        }
+      });
+    });
+  }, [images, loadLutImage]);
 
   // Load image into cache
   const loadImage = useCallback((url: string): Promise<HTMLImageElement> => {

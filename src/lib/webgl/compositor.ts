@@ -27,6 +27,7 @@ import {
   vignetteFragmentShader,
   chromaticAberrationFragmentShader,
   blurFragmentShader,
+  lutFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -65,6 +66,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return chromaticAberrationFragmentShader;
     case "blur":
       return blurFragmentShader;
+    case "lut":
+      return lutFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -170,6 +173,12 @@ function setShaderUniforms(
       if (qualityLoc) gl.uniform1f(qualityLoc, layer.properties.quality);
       break;
     }
+    case "lut": {
+      const intensityLoc = getUniformLocation(gl, program, "u_intensity");
+      if (intensityLoc) gl.uniform1f(intensityLoc, layer.properties.intensity);
+      // Note: u_lut texture and u_hasLut are set separately in the render loop
+      break;
+    }
     case "color-correction": {
       const brightnessLoc = getUniformLocation(gl, program, "u_brightness");
       const contrastLoc = getUniformLocation(gl, program, "u_contrast");
@@ -221,6 +230,8 @@ function hasEffect(layer: ShaderLayer): boolean {
       return layer.properties.size > 1;
     case "chromatic-aberration":
       return layer.properties.offset > 0;
+    case "lut":
+      return layer.properties.lutUrl !== "" && layer.properties.intensity > 0;
     default:
       return true;
   }
@@ -237,6 +248,8 @@ export class ShaderCompositor {
   private quadRenderer: QuadRenderer;
   private width = 0;
   private height = 0;
+  private lutImages: Map<string, HTMLImageElement> = new Map();
+  private loadingLuts: Set<string> = new Set();
 
   constructor(gl: WebGL2RenderingContext) {
     this.gl = gl;
@@ -244,6 +257,31 @@ export class ShaderCompositor {
     this.textureCache = new TextureCache(gl);
     this.pingPong = new PingPongBuffer(gl);
     this.quadRenderer = new QuadRenderer(gl);
+  }
+
+  /**
+   * Pre-load a LUT image from URL/data URL
+   */
+  loadLutImage(url: string): void {
+    if (this.lutImages.has(url) || this.loadingLuts.has(url) || !url) return;
+
+    this.loadingLuts.add(url);
+    const img = new Image();
+    img.onload = () => {
+      this.lutImages.set(url, img);
+      this.loadingLuts.delete(url);
+    };
+    img.onerror = () => {
+      this.loadingLuts.delete(url);
+    };
+    img.src = url;
+  }
+
+  /**
+   * Check if a LUT image is loaded
+   */
+  hasLutImage(url: string): boolean {
+    return this.lutImages.has(url);
   }
 
   /**
@@ -330,6 +368,29 @@ export class ShaderCompositor {
 
       // Set shader-specific uniforms
       setShaderUniforms(gl, program, layer);
+
+      // Handle LUT texture binding
+      if (layer.type === "lut") {
+        const hasLutLoc = getUniformLocation(gl, program, "u_hasLut");
+        const lutTexLoc = getUniformLocation(gl, program, "u_lut");
+        const lutUrl = layer.properties.lutUrl;
+        const lutImage = this.lutImages.get(lutUrl);
+
+        if (lutImage && lutTexLoc) {
+          // Get or create LUT texture
+          const lutTexture = this.textureCache.getTexture(`lut:${lutUrl}`, lutImage);
+          if (lutTexture) {
+            bindTexture(gl, lutTexture, 1);
+            gl.uniform1i(lutTexLoc, 1);
+            if (hasLutLoc) gl.uniform1i(hasLutLoc, 1);
+          } else {
+            if (hasLutLoc) gl.uniform1i(hasLutLoc, 0);
+          }
+        } else {
+          // LUT not loaded yet, render without it
+          if (hasLutLoc) gl.uniform1i(hasLutLoc, 0);
+        }
+      }
 
       // Set flipY uniform - only flip on first pass (image texture)
       // Framebuffer textures are already in correct orientation

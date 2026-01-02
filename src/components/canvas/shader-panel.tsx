@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Plus, Trash2, Eye, EyeOff, Download, Code } from "lucide-react";
+import { Plus, Trash2, Eye, EyeOff, Download, Code, Upload } from "lucide-react";
 import { exportAndDownloadImage } from "@/lib/export/image-export";
 import { generateShaderExport, downloadTextFile } from "@/lib/export/shader-export";
 
@@ -368,6 +368,56 @@ function ShaderLayerEditor({
           </>
         )}
 
+        {layer.type === "lut" && (
+          <>
+            <div className="space-y-1">
+              <span className="text-xs text-muted-foreground">LUT Image (256x16)</span>
+              <label className="flex items-center justify-center gap-2 w-full h-8 px-2 bg-secondary rounded text-sm cursor-pointer hover:bg-secondary/80">
+                <Upload className="h-3.5 w-3.5" />
+                {layer.properties.lutUrl ? "Change LUT" : "Upload LUT"}
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        const dataUrl = event.target?.result as string;
+                        updateLayer({
+                          imageId,
+                          layerId: layer.id,
+                          changes: {
+                            properties: { ...layer.properties, lutUrl: dataUrl },
+                          },
+                        });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+              </label>
+              {layer.properties.lutUrl && (
+                <div className="mt-1 p-1 bg-secondary rounded">
+                  <img
+                    src={layer.properties.lutUrl}
+                    alt="LUT preview"
+                    className="w-full h-4 object-cover rounded"
+                  />
+                </div>
+              )}
+            </div>
+            <PropertySlider
+              label="Intensity"
+              value={layer.properties.intensity}
+              min={0}
+              max={1}
+              onChange={(v) => updateProperty("intensity", v)}
+            />
+          </>
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -416,6 +466,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "saturation",
   "hue-rotate",
   "blur",
+  "lut",
   "blend-mode",
   "film-grain",
   "duotone",

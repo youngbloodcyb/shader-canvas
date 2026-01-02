@@ -21,6 +21,7 @@ import {
   vignetteFragmentShader,
   chromaticAberrationFragmentShader,
   blurFragmentShader,
+  lutFragmentShader,
   colorCorrectionFragmentShader,
 } from "@/shaders";
 
@@ -59,6 +60,8 @@ function getFragmentShaderSource(type: ShaderLayer["type"]): string {
       return chromaticAberrationFragmentShader;
     case "blur":
       return blurFragmentShader;
+    case "lut":
+      return lutFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -118,6 +121,11 @@ function formatUniformValues(layer: ShaderLayer): string {
     case "blur":
       lines.push(`u_radius = ${layer.properties.radius}`);
       lines.push(`u_quality = ${layer.properties.quality}`);
+      break;
+    case "lut":
+      lines.push(`u_intensity = ${layer.properties.intensity}`);
+      lines.push(`u_lut = <LUT texture sampler>`);
+      lines.push(`u_hasLut = true`);
       break;
     case "color-correction":
       lines.push(`u_brightness = ${layer.properties.brightness}`);

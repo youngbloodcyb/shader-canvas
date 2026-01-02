@@ -209,6 +209,19 @@ export interface ChromaticAberrationShader extends ShaderLayerBase {
 }
 
 /**
+ * LUT color grading shader - applies color lookup table
+ */
+export interface LutShader extends ShaderLayerBase {
+  type: "lut";
+  properties: {
+    /** Data URL or URL of the LUT image (256x16) */
+    lutUrl: string;
+    /** Blend intensity between original and graded (0-1) */
+    intensity: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -231,7 +244,8 @@ export type ShaderLayer =
   | ThresholdShader
   | DitherShader
   | VignetteShader
-  | ChromaticAberrationShader;
+  | ChromaticAberrationShader
+  | LutShader;
 
 /**
  * Extract shader type string literals
@@ -295,6 +309,10 @@ export const SHADER_DEFAULTS: {
   "chromatic-aberration": {
     offset: 0.02,
   },
+  "lut": {
+    lutUrl: "",
+    intensity: 1.0,
+  },
 };
 
 /**
@@ -317,6 +335,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   "dither": "Dither",
   "vignette": "Vignette",
   "chromatic-aberration": "Chromatic Aberration",
+  "lut": "LUT Color Grade",
 };
 
 /**

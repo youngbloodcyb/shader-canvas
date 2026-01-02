@@ -159,11 +159,27 @@ export function useShaderRenderer() {
     }
   }, []);
 
+  /**
+   * Load a LUT image for use in LUT shader
+   */
+  const loadLutImage = useCallback((url: string) => {
+    compositorRef.current?.loadLutImage(url);
+  }, []);
+
+  /**
+   * Check if a LUT image is loaded
+   */
+  const hasLutImage = useCallback((url: string): boolean => {
+    return compositorRef.current?.hasLutImage(url) ?? false;
+  }, []);
+
   return {
     processImage,
     getProcessedImage,
     clearCache,
     invalidateCache,
+    loadLutImage,
+    hasLutImage,
     isReady: glRef.current !== null,
   };
 }
