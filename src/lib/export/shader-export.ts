@@ -23,6 +23,7 @@ import {
   blurFragmentShader,
   lutFragmentShader,
   halationFragmentShader,
+  bloomFragmentShader,
   colorCorrectionFragmentShader,
 } from "@/shaders";
 
@@ -65,6 +66,8 @@ function getFragmentShaderSource(type: ShaderLayer["type"]): string {
       return lutFragmentShader;
     case "halation":
       return halationFragmentShader;
+    case "bloom":
+      return bloomFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -135,6 +138,12 @@ function formatUniformValues(layer: ShaderLayer): string {
       lines.push(`u_intensity = ${layer.properties.intensity}`);
       lines.push(`u_spread = ${layer.properties.spread}`);
       lines.push(`u_tint = vec3(${layer.properties.tint.join(", ")})`);
+      break;
+    case "bloom":
+      lines.push(`u_threshold = ${layer.properties.threshold}`);
+      lines.push(`u_intensity = ${layer.properties.intensity}`);
+      lines.push(`u_radius = ${layer.properties.radius}`);
+      lines.push(`u_exposure = ${layer.properties.exposure}`);
       break;
     case "color-correction":
       lines.push(`u_brightness = ${layer.properties.brightness}`);

@@ -462,6 +462,40 @@ function ShaderLayerEditor({
           </>
         )}
 
+        {layer.type === "bloom" && (
+          <>
+            <PropertySlider
+              label="Threshold"
+              value={layer.properties.threshold}
+              min={0}
+              max={1}
+              onChange={(v) => updateProperty("threshold", v)}
+            />
+            <PropertySlider
+              label="Intensity"
+              value={layer.properties.intensity}
+              min={0}
+              max={2}
+              onChange={(v) => updateProperty("intensity", v)}
+            />
+            <PropertySlider
+              label="Radius"
+              value={layer.properties.radius}
+              min={1}
+              max={20}
+              step={1}
+              onChange={(v) => updateProperty("radius", v)}
+            />
+            <PropertySlider
+              label="Exposure"
+              value={layer.properties.exposure}
+              min={0.5}
+              max={3}
+              onChange={(v) => updateProperty("exposure", v)}
+            />
+          </>
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -512,6 +546,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "blur",
   "lut",
   "halation",
+  "bloom",
   "blend-mode",
   "film-grain",
   "duotone",

@@ -26,3 +26,4 @@ export { chromaticAberrationFragmentShader } from "./chromatic-aberration.frag";
 export { blurFragmentShader } from "./blur.frag";
 export { lutFragmentShader } from "./lut.frag";
 export { halationFragmentShader } from "./halation.frag";
+export { bloomFragmentShader } from "./bloom.frag";

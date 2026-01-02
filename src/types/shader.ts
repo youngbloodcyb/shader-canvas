@@ -239,6 +239,23 @@ export interface HalationShader extends ShaderLayerBase {
 }
 
 /**
+ * Bloom shader - soft glow effect with HDR tone mapping
+ */
+export interface BloomShader extends ShaderLayerBase {
+  type: "bloom";
+  properties: {
+    /** Brightness threshold for bloom (0-1) */
+    threshold: number;
+    /** Bloom intensity (0-2) */
+    intensity: number;
+    /** Blur radius (1-20) */
+    radius: number;
+    /** Exposure for tone mapping (0.5-3) */
+    exposure: number;
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -263,7 +280,8 @@ export type ShaderLayer =
   | VignetteShader
   | ChromaticAberrationShader
   | LutShader
-  | HalationShader;
+  | HalationShader
+  | BloomShader;
 
 /**
  * Extract shader type string literals
@@ -337,6 +355,12 @@ export const SHADER_DEFAULTS: {
     spread: 8,
     tint: [1.0, 0.3, 0.1],
   },
+  "bloom": {
+    threshold: 0.6,
+    intensity: 0.5,
+    radius: 10,
+    exposure: 1.0,
+  },
 };
 
 /**
@@ -361,6 +385,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   "chromatic-aberration": "Chromatic Aberration",
   "lut": "LUT Color Grade",
   "halation": "Halation",
+  "bloom": "Bloom",
 };
 
 /**

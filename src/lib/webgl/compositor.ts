@@ -29,6 +29,7 @@ import {
   blurFragmentShader,
   lutFragmentShader,
   halationFragmentShader,
+  bloomFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -71,6 +72,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return lutFragmentShader;
     case "halation":
       return halationFragmentShader;
+    case "bloom":
+      return bloomFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -193,6 +196,17 @@ function setShaderUniforms(
       if (tintLoc) gl.uniform3f(tintLoc, layer.properties.tint[0], layer.properties.tint[1], layer.properties.tint[2]);
       break;
     }
+    case "bloom": {
+      const thresholdLoc = getUniformLocation(gl, program, "u_threshold");
+      const intensityLoc = getUniformLocation(gl, program, "u_intensity");
+      const radiusLoc = getUniformLocation(gl, program, "u_radius");
+      const exposureLoc = getUniformLocation(gl, program, "u_exposure");
+      if (thresholdLoc) gl.uniform1f(thresholdLoc, layer.properties.threshold);
+      if (intensityLoc) gl.uniform1f(intensityLoc, layer.properties.intensity);
+      if (radiusLoc) gl.uniform1f(radiusLoc, layer.properties.radius);
+      if (exposureLoc) gl.uniform1f(exposureLoc, layer.properties.exposure);
+      break;
+    }
     case "color-correction": {
       const brightnessLoc = getUniformLocation(gl, program, "u_brightness");
       const contrastLoc = getUniformLocation(gl, program, "u_contrast");
@@ -247,6 +261,8 @@ function hasEffect(layer: ShaderLayer): boolean {
     case "lut":
       return layer.properties.lutUrl !== "" && layer.properties.intensity > 0;
     case "halation":
+      return layer.properties.intensity > 0;
+    case "bloom":
       return layer.properties.intensity > 0;
     default:
       return true;
