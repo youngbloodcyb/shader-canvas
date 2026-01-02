@@ -22,6 +22,7 @@ import {
   chromaticAberrationFragmentShader,
   blurFragmentShader,
   lutFragmentShader,
+  halationFragmentShader,
   colorCorrectionFragmentShader,
 } from "@/shaders";
 
@@ -62,6 +63,8 @@ function getFragmentShaderSource(type: ShaderLayer["type"]): string {
       return blurFragmentShader;
     case "lut":
       return lutFragmentShader;
+    case "halation":
+      return halationFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -126,6 +129,12 @@ function formatUniformValues(layer: ShaderLayer): string {
       lines.push(`u_intensity = ${layer.properties.intensity}`);
       lines.push(`u_lut = <LUT texture sampler>`);
       lines.push(`u_hasLut = true`);
+      break;
+    case "halation":
+      lines.push(`u_threshold = ${layer.properties.threshold}`);
+      lines.push(`u_intensity = ${layer.properties.intensity}`);
+      lines.push(`u_spread = ${layer.properties.spread}`);
+      lines.push(`u_tint = vec3(${layer.properties.tint.join(", ")})`);
       break;
     case "color-correction":
       lines.push(`u_brightness = ${layer.properties.brightness}`);

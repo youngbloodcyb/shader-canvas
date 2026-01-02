@@ -28,6 +28,7 @@ import {
   chromaticAberrationFragmentShader,
   blurFragmentShader,
   lutFragmentShader,
+  halationFragmentShader,
   passthroughFragmentShader,
 } from "@/shaders";
 
@@ -68,6 +69,8 @@ function getFragmentShader(type: ShaderLayer["type"]): string {
       return blurFragmentShader;
     case "lut":
       return lutFragmentShader;
+    case "halation":
+      return halationFragmentShader;
     case "color-correction":
       return colorCorrectionFragmentShader;
     default:
@@ -179,6 +182,17 @@ function setShaderUniforms(
       // Note: u_lut texture and u_hasLut are set separately in the render loop
       break;
     }
+    case "halation": {
+      const thresholdLoc = getUniformLocation(gl, program, "u_threshold");
+      const intensityLoc = getUniformLocation(gl, program, "u_intensity");
+      const spreadLoc = getUniformLocation(gl, program, "u_spread");
+      const tintLoc = getUniformLocation(gl, program, "u_tint");
+      if (thresholdLoc) gl.uniform1f(thresholdLoc, layer.properties.threshold);
+      if (intensityLoc) gl.uniform1f(intensityLoc, layer.properties.intensity);
+      if (spreadLoc) gl.uniform1f(spreadLoc, layer.properties.spread);
+      if (tintLoc) gl.uniform3f(tintLoc, layer.properties.tint[0], layer.properties.tint[1], layer.properties.tint[2]);
+      break;
+    }
     case "color-correction": {
       const brightnessLoc = getUniformLocation(gl, program, "u_brightness");
       const contrastLoc = getUniformLocation(gl, program, "u_contrast");
@@ -232,6 +246,8 @@ function hasEffect(layer: ShaderLayer): boolean {
       return layer.properties.offset > 0;
     case "lut":
       return layer.properties.lutUrl !== "" && layer.properties.intensity > 0;
+    case "halation":
+      return layer.properties.intensity > 0;
     default:
       return true;
   }

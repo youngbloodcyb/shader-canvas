@@ -222,6 +222,23 @@ export interface LutShader extends ShaderLayerBase {
 }
 
 /**
+ * Halation shader - film-like glow on bright areas
+ */
+export interface HalationShader extends ShaderLayerBase {
+  type: "halation";
+  properties: {
+    /** Brightness threshold for halation (0-1) */
+    threshold: number;
+    /** Effect intensity (0-1) */
+    intensity: number;
+    /** Blur spread radius (1-20) */
+    spread: number;
+    /** Halation tint color RGB (0-1 each) */
+    tint: [number, number, number];
+  };
+}
+
+/**
  * Discriminated union of all shader types.
  * To add a new shader:
  * 1. Create a new interface extending ShaderLayerBase
@@ -245,7 +262,8 @@ export type ShaderLayer =
   | DitherShader
   | VignetteShader
   | ChromaticAberrationShader
-  | LutShader;
+  | LutShader
+  | HalationShader;
 
 /**
  * Extract shader type string literals
@@ -313,6 +331,12 @@ export const SHADER_DEFAULTS: {
     lutUrl: "",
     intensity: 1.0,
   },
+  "halation": {
+    threshold: 0.7,
+    intensity: 0.3,
+    spread: 8,
+    tint: [1.0, 0.3, 0.1],
+  },
 };
 
 /**
@@ -336,6 +360,7 @@ export const SHADER_LABELS: Record<ShaderType, string> = {
   "vignette": "Vignette",
   "chromatic-aberration": "Chromatic Aberration",
   "lut": "LUT Color Grade",
+  "halation": "Halation",
 };
 
 /**

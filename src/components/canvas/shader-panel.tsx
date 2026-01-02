@@ -418,6 +418,50 @@ function ShaderLayerEditor({
           </>
         )}
 
+        {layer.type === "halation" && (
+          <>
+            <PropertySlider
+              label="Threshold"
+              value={layer.properties.threshold}
+              min={0}
+              max={1}
+              onChange={(v) => updateProperty("threshold", v)}
+            />
+            <PropertySlider
+              label="Intensity"
+              value={layer.properties.intensity}
+              min={0}
+              max={1}
+              onChange={(v) => updateProperty("intensity", v)}
+            />
+            <PropertySlider
+              label="Spread"
+              value={layer.properties.spread}
+              min={1}
+              max={20}
+              step={1}
+              onChange={(v) => updateProperty("spread", v)}
+            />
+            <div className="space-y-1">
+              <span className="text-xs text-muted-foreground">Tint Color</span>
+              <input
+                type="color"
+                value={rgbToHex(layer.properties.tint)}
+                onChange={(e) => {
+                  updateLayer({
+                    imageId,
+                    layerId: layer.id,
+                    changes: {
+                      properties: { ...layer.properties, tint: hexToRgb(e.target.value) },
+                    },
+                  });
+                }}
+                className="w-full h-8 rounded cursor-pointer"
+              />
+            </div>
+          </>
+        )}
+
         {layer.type === "color-correction" && (
           <>
             <PropertySlider
@@ -467,6 +511,7 @@ const AVAILABLE_SHADERS: ShaderType[] = [
   "hue-rotate",
   "blur",
   "lut",
+  "halation",
   "blend-mode",
   "film-grain",
   "duotone",
